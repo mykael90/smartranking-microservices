@@ -1,0 +1,99 @@
+### Variables
+@urlLocal = http://localhost:8080/api/v1/categories
+@contentType = application/json
+
+### POST Category A
+POST {{urlLocal}}
+Content-Type: {{contentType}}
+
+{
+    "category": "A",
+    "description": "Category A",
+    "events": [
+        {
+        "name": "VICTORY",
+        "operation": "+",
+        "value": "30"
+        },
+        {
+        "name": "VICTORY_LEADER",
+        "operation": "+",
+        "value": "50"
+        },
+        {
+        "name": "DEFEAT",
+        "operation": "+",
+        "value": "0"
+        }
+    ]
+}
+
+### POST Category B
+POST {{urlLocal}}
+Content-Type: {{contentType}}
+
+{
+    "category": "B",
+    "description": "Category B",
+    "events": [
+        {
+        "name": "VICTORY",
+        "operation": "+",
+        "value": "15"
+        },
+        {
+        "name": "VICTORY_LEADER",
+        "operation": "+",
+        "value": "25"
+        },
+        {
+        "name": "DEFEAT",
+        "operation": "+",
+        "value": "0"
+        }
+    ]
+}
+
+### GET all
+GET {{urlLocal}}
+
+### GET all by category
+# @prompt category
+GET {{urlLocal}}?category={{category}}
+
+### GET all by idPlayer 
+# @prompt idPlayer
+GET {{urlLocal}}?idPlayer={{idPlayer}}
+
+### POST insert a player in a category
+# @prompt category
+# @prompt playerId
+POST {{urlLocal}}/{{category}}/players/{{playerId}}
+
+### PUT
+# @prompt category
+PUT {{urlLocal}}/{{category}}
+Content-Type: {{contentType}}
+
+{
+    "category": "B++",
+    "description": "Category B++",
+    "events": [
+        {
+        "name": "VICTORY",
+        "operation": "+",
+        "value": "15"
+        },
+        {
+        "name": "VICTORY_LEADER",
+        "operation": "+",
+        "value": "25"
+        },
+        {
+        "name": "DEFEAT",
+        "operation": "+",
+        "value": "0"
+        }
+    ]
+}
+
