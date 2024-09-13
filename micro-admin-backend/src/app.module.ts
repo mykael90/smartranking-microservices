@@ -10,8 +10,8 @@ import { AppService } from './app.service';
     MongooseModule.forRoot('mongodb://mongo:27017', {
       dbName: 'sradmbackend',
       auth: {
-        username: 'root',
-        password: 'example',
+        username: process.env.MONGO_INITDB_ROOT_USERNAME,
+        password: process.env.MONGO_INITDB_ROOT_PASSWORD,
       },
       autoIndex: true,
       autoCreate: true,
