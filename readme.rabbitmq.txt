@@ -1,0 +1,1 @@
+create a virtual host with name smartranking

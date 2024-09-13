@@ -7,7 +7,7 @@ import { AppService } from './app.service';
 
 @Module({
   imports: [
-    MongooseModule.forRoot('mongodb://localhost:27017', {
+    MongooseModule.forRoot('mongodb://mongo:27017', {
       dbName: 'sradmbackend',
       auth: {
         username: 'root',
