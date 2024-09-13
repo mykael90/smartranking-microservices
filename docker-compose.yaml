@@ -10,7 +10,7 @@ services:
     env_file:
       - ${ENV_FILE_RMQ}
     volumes:
-      - ./api-gateway:/home/node/api-gateway
+      - ./api-gateway:/home/node/api-gateway:cached # api-gateway
     depends_on:
       - rabbitmq
 
@@ -23,7 +23,7 @@ services:
       - ${ENV_FILE_DB}
       - ${ENV_FILE_RMQ}
     volumes:
-      - ./micro-admin-backend:/home/node/micro-admin-backend # micro-admin-backend
+      - ./micro-admin-backend:/home/node/micro-admin-backend:cached # micro-admin-backend
       - ./.storage/${ENV}/micro-admin-backend:/home/node/micro-admin-backend/storage # storage for micro-admin-backend
     depends_on:
       - mongo
