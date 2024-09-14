@@ -8,4 +8,4 @@ RUN mkdir /home/node/api-gateway/
 
 WORKDIR /home/node/api-gateway/
 
-CMD ["/home/node/api-gateway/.docker/start-dev.sh"]
+CMD ["/home/node/api-gateway/.docker/start.sh"]
