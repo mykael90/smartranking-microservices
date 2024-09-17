@@ -1,0 +1,39 @@
+### Variables
+@urlLocal = http://localhost:8080/api/v1/players
+@contentType = application/json
+
+### POST
+# @name player
+POST {{urlLocal}}
+Content-Type: {{contentType}}
+
+{
+    "phone": "84 99665-5656",
+    "email": "joao@provider.com",
+    "name": "Joao Severina"
+}
+
+### GET all
+GET {{urlLocal}}
+
+
+### GET one
+# @prompt playerId
+# @name player
+GET {{urlLocal}}/{{playerId}}
+
+### GET one
+GET {{urlLocal}}/{{player.response.body._id}}
+
+### PUT
+PUT {{urlLocal}}/{{player.response.body._id}}
+Content-Type: {{contentType}}
+
+{
+    "phone": "84 99666-5656",
+    "email": "roger_guedes@provider.com",
+    "name": "Roger Guedes"
+}
+
+### DELETE
+DELETE {{urlLocal}}/{{player.response.body._id}}

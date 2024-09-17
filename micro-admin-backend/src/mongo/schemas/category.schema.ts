@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types, Schema as MongooseSchema } from 'mongoose';
-import { Player } from '../players/player.schema';
+import { Player } from './player.schema';
 
 export interface Event {
   name: string;

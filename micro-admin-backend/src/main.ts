@@ -11,6 +11,7 @@ async function bootstrap() {
       urls: [
         `amqp://${process.env.RABBITMQ_DEFAULT_USER}:${process.env.RABBITMQ_DEFAULT_PASS}@rabbit13:5672/smartranking`,
       ],
+      noAck: false,
       queue: 'admin-backend',
       queueOptions: {
         durable: false,

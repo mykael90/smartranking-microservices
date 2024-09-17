@@ -1,28 +1,21 @@
-import {
-  BadRequestException,
-  Injectable,
-  Logger,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Category } from './schemas/categories/category.schema';
-import { Player } from './schemas/players/player.schema';
+import { Category } from '../mongo/schemas/category.schema';
+import { Player } from '../mongo/schemas/player.schema';
 import { RpcException } from '@nestjs/microservices';
 
 @Injectable()
-export class AppService {
+export class CategoriesService {
   constructor(
     @InjectModel('Category') private readonly categoryModel: Model<Category>,
     @InjectModel('Player')
     private readonly playerModel: Model<Player>,
   ) {}
 
-  private readonly logger = new Logger(AppService.name);
+  private readonly logger = new Logger(CategoriesService.name);
 
   async createCategory(category: Category): Promise<Category> {
-    // const { category } = category;
-
     try {
       const categoryCreated = new this.categoryModel(category);
       return await categoryCreated.save();
@@ -33,17 +26,29 @@ export class AppService {
   }
 
   async findCategories(): Promise<Category[]> {
-    return await this.categoryModel.find().populate('players').exec();
+    try {
+      return await this.categoryModel.find().populate('players').exec();
+    } catch (error) {
+      this.logger.error(`error: ${JSON.stringify(error.message)}`);
+      throw new RpcException(error.message);
+    }
   }
 
   async findCategoryByCategory(category: string): Promise<Category> {
-    const categoryFound = await this.categoryModel.findOne({ category }).exec();
+    try {
+      const categoryFound = await this.categoryModel
+        .findOne({ category })
+        .exec();
 
-    if (!categoryFound) {
-      throw new NotFoundException(`Category '${category}' not found`);
+      if (!categoryFound) {
+        throw new NotFoundException(`Category '${category}' not found`);
+      }
+
+      return categoryFound;
+    } catch (error) {
+      this.logger.error(`error: ${JSON.stringify(error.message)}`);
+      throw new RpcException(error.message);
     }
-
-    return categoryFound;
   }
 
   // async findPlayerCategory(_idPlayer: any): Promise<Category> {
@@ -62,22 +67,30 @@ export class AppService {
   //     .exec();
   // }
 
-  // async updateCategory(
-  //   category: string,
-  //   updateCategoryDto: UpdateCategoryDto,
-  // ): Promise<void> {
-  //   const categoryExists = await this.categoryModel
-  //     .findOne({ category })
-  //     .exec();
+  async updateCategory(
+    category: string,
+    updateCategoryDto: Category,
+  ): Promise<Category> {
+    try {
+      // Tenta encontrar e atualizar a categoria
+      const result = await this.categoryModel
+        .findOneAndUpdate(
+          { category },
+          { $set: updateCategoryDto },
+          { new: true },
+        )
+        .exec();
 
-  //   if (!categoryExists) {
-  //     throw new NotFoundException(`Category '${category}' not found`);
-  //   }
+      if (!result) {
+        throw new NotFoundException(`Category '${category}' not found`);
+      }
 
-  //   await this.categoryModel
-  //     .findOneAndUpdate({ category }, { $set: updateCategoryDto })
-  //     .exec();
-  // }
+      return result;
+    } catch (error) {
+      this.logger.error(`error: ${JSON.stringify(error.message)}`);
+      throw new RpcException(error.message);
+    }
+  }
 
   // async assignPlayerToCategory(params: string[]): Promise<void> {
   //   const category = params['category'];

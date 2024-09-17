@@ -54,6 +54,32 @@ Content-Type: {{contentType}}
     ]
 }
 
+### POST Category C
+POST {{urlLocal}}
+Content-Type: {{contentType}}
+
+{
+    "category": "C",
+    "description": "Category C",
+    "events": [
+        {
+        "name": "VICTORY",
+        "operation": "+",
+        "value": "15"
+        },
+        {
+        "name": "VICTORY_LEADER",
+        "operation": "+",
+        "value": "25"
+        },
+        {
+        "name": "DEFEAT",
+        "operation": "+",
+        "value": "0"
+        }
+    ]
+}
+
 ### GET all
 GET {{urlLocal}}
 
@@ -76,8 +102,8 @@ PUT {{urlLocal}}/{{category}}
 Content-Type: {{contentType}}
 
 {
-    "category": "B++",
-    "description": "Category B++",
+    "category": "C++",
+    "description": "Category C++",
     "events": [
         {
         "name": "VICTORY",

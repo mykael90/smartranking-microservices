@@ -1,5 +1,5 @@
 import { ArrayMinSize, IsArray, IsOptional, IsString } from 'class-validator';
-import { Event } from '../dtos/create-category.dto';
+import { Event } from '../dto/create-category.dto';
 
 export class UpdateCategoryDto {
   @IsString()
