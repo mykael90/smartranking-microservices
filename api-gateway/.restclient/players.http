@@ -8,9 +8,9 @@ POST {{urlLocal}}
 Content-Type: {{contentType}}
 
 {
-    "phone": "84 99665-5656",
-    "email": "joao@provider.com",
-    "name": "Joao Severina"
+    "phone": "84 9999-5656",
+    "email": "marcos@provider.com",
+    "name": "Marcos Antonio"
 }
 
 ### GET all

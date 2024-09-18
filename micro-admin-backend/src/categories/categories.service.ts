@@ -1,6 +1,11 @@
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  Logger,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { Category } from '../mongo/schemas/category.schema';
 import { Player } from '../mongo/schemas/player.schema';
 import { RpcException } from '@nestjs/microservices';
@@ -51,21 +56,38 @@ export class CategoriesService {
     }
   }
 
-  // async findPlayerCategory(_idPlayer: any): Promise<Category> {
-  //   const players = await this.playersService.findPlayers();
+  async findPlayerCategory(_idPlayer: string): Promise<Category> {
+    try {
+      const players = await this.playerModel.find().exec();
 
-  //   const playerFiltered = players.filter((player) => player._id == _idPlayer);
+      const playerFiltered = players.filter(
+        (player) => player._id == _idPlayer,
+      );
 
-  //   if (playerFiltered.length === 0) {
-  //     throw new BadRequestException(`The id ${_idPlayer} isn't a Player!`);
-  //   }
+      if (playerFiltered.length == 0) {
+        throw new NotFoundException(`The id ${_idPlayer} isn't a Player!`);
+      }
 
-  //   return await this.categoryModel
-  //     .findOne()
-  //     .where('players')
-  //     .in(_idPlayer)
-  //     .exec();
-  // }
+      this.logger.log(`playerFiltered: ${JSON.stringify(playerFiltered)}`);
+
+      const result = await this.categoryModel
+        .findOne()
+        .where('players')
+        .in(playerFiltered)
+        .exec();
+
+      if (!result) {
+        throw new NotFoundException(
+          `Player ${_idPlayer} not assigned to any Category!`,
+        );
+      }
+
+      return result;
+    } catch (error) {
+      this.logger.error(`error: ${JSON.stringify(error.message)}`);
+      throw new RpcException(error.message);
+    }
+  }
 
   async updateCategory(
     category: string,
@@ -92,33 +114,50 @@ export class CategoriesService {
     }
   }
 
-  // async assignPlayerToCategory(params: string[]): Promise<void> {
-  //   const category = params['category'];
-  //   const _idPlayer = params['_idPlayer'];
+  async assignPlayerToCategory(params: {
+    _idPlayer: string;
+    category: string;
+  }): Promise<Category> {
+    const { category, _idPlayer } = params;
 
-  //   const categoryFound = await this.categoryModel.findOne({ category }).exec();
-  //   const playerAlreadyInCategory = await this.categoryModel
-  //     .find({ category })
-  //     .where('players')
-  //     .in(_idPlayer)
-  //     .exec();
+    try {
+      const categoryFound = await this.categoryModel
+        .findOne({ category })
+        .exec();
 
-  //   await this.playersService.findPlayerById(_idPlayer);
+      if (!categoryFound) {
+        throw new NotFoundException(`Category '${category}' not found.`);
+      }
 
-  //   if (!categoryFound) {
-  //     throw new BadRequestException(`Category '${category}' not registered.`);
-  //   }
+      const player = await this.playerModel.findById(_idPlayer).exec();
 
-  //   if (playerAlreadyInCategory.length > 0) {
-  //     throw new BadRequestException(
-  //       `Player '${_idPlayer}' already in the category '${category}'`,
-  //     );
-  //   }
+      if (!player) {
+        throw new NotFoundException(`Player '${_idPlayer}' not found.`);
+      }
 
-  //   categoryFound.players.push(_idPlayer);
+      // TODO: verification not working
+      const playerAlreadyInCategory = await this.categoryModel
+        .find({ category })
+        .where('players')
+        .in([player])
+        .exec();
 
-  //   await this.categoryModel
-  //     .findOneAndUpdate({ category }, { $set: categoryFound })
-  //     .exec();
-  // }
+      if (playerAlreadyInCategory.length > 0) {
+        throw new BadRequestException(
+          `Player '${_idPlayer}' already in the category '${category}'`,
+        );
+      }
+
+      categoryFound.players.push(player);
+
+      const result = await this.categoryModel
+        .findOneAndUpdate({ category }, { $set: categoryFound }, { new: true })
+        .exec();
+
+      return result;
+    } catch (error) {
+      this.logger.error(`error: ${JSON.stringify(error.message)}`);
+      throw new RpcException(error.message);
+    }
+  }
 }

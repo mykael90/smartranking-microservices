@@ -47,7 +47,9 @@ export class CategoriesController {
   }
 
   @Post('/:category/players/:_idPlayer')
-  assignPlayerToCategory(@Param() params: string[]) {
+  assignPlayerToCategory(
+    @Param() params: { _idPlayer: string; category: string },
+  ) {
     return this.rabbitMQService
       .getClientProxy()
       .send('assign-player-to-category', params);

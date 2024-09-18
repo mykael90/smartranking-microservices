@@ -1,4 +1,4 @@
-import { Controller, Logger } from '@nestjs/common';
+import { Controller, Logger, NotFoundException } from '@nestjs/common';
 import { CategoriesService } from './categories.service';
 import {
   Ctx,
@@ -9,6 +9,7 @@ import {
   RpcException,
 } from '@nestjs/microservices';
 import { Category } from '../mongo/schemas/category.schema';
+import { NotFoundError } from 'rxjs';
 
 const ackErrors: string[] = [];
 
@@ -64,19 +65,29 @@ export class CategoriesController {
 
     const category = params['category'];
 
-    try {
-      const result = category
-        ? await this.categoriesService.findCategoryByCategory(category)
-        : await this.categoriesService.findCategories();
+    const idPlayer = params['idPlayer'];
 
-      channel.ack(originalMsg); // Ack no sucesso
+    try {
+      if (idPlayer) {
+        const result =
+          await this.categoriesService.findPlayerCategory(idPlayer);
+
+        return result;
+      }
+
+      if (category) {
+        const result =
+          await this.categoriesService.findCategoryByCategory(category);
+        return result;
+      }
+
+      const result = await this.categoriesService.findCategories();
       return result;
     } catch (error) {
       this.logger.error(`error: ${error.message}`);
-
+      throw new RpcException(error.message);
+    } finally {
       await channel.ack(originalMsg); //GET handler, I'll discard even with error, no data lost
-
-      throw new RpcException('Failed to retrieve categories');
     }
   }
 
@@ -114,6 +125,25 @@ export class CategoriesController {
 
       channel.nack(originalMsg);
       throw new RpcException('Failed to update category');
+    }
+  }
+
+  @MessagePattern('assign-player-to-category')
+  async assignPlayerToCategory(
+    @Payload() payload: { _idPlayer: string; category: string },
+    @Ctx() context: RmqContext,
+  ) {
+    const channel = context.getChannelRef();
+    const originalMsg = context.getMessage();
+    try {
+      const result =
+        await this.categoriesService.assignPlayerToCategory(payload);
+      return result;
+    } catch (error) {
+      this.logger.error(`error: ${JSON.stringify(error.message)}`);
+      throw new RpcException(error.message);
+    } finally {
+      await channel.ack(originalMsg);
     }
   }
 }
