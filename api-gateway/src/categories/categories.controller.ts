@@ -26,6 +26,11 @@ export class CategoriesController {
     this.rabbitMQService
       .getClientProxy()
       .emit('create-category', createCategoryDto);
+
+    return {
+      statusCode: 201,
+      message: 'Category criation requested, soon it will be processed',
+    };
   }
 
   @Get()

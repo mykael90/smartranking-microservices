@@ -3,7 +3,6 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
   Delete,
   UsePipes,
@@ -28,6 +27,11 @@ export class PlayersController {
     this.rabbitMQService
       .getClientProxy()
       .emit('create-player', createPlayerDto);
+
+    return {
+      statusCode: 201,
+      message: 'Player criation requested, soon it will be processed',
+    };
   }
 
   @Get()
