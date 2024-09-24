@@ -32,10 +32,10 @@ export class ChallengesController {
   }
 
   @Get()
-  findAll(@Query('idPlayer') idPlayer: string) {
+  findAll(@Query() params: string[]) {
     return this.rabbitMQService
       .getClientProxyChallenge()
-      .send('find-challenges', idPlayer);
+      .send('find-challenges', params);
   }
 
   @Put(':challenge')

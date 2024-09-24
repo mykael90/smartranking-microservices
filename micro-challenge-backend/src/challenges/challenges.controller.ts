@@ -41,26 +41,63 @@ export class ChallengesController {
     }
   }
 
-  @MessagePattern('findAllChallenges')
-  findAll() {
-    return this.challengesService.findAll();
+  @MessagePattern('find-challenges')
+  async findAll(@Payload() params: string[], @Ctx() context: RmqContext) {
+    const channel = context.getChannelRef();
+
+    const originalMsg = context.getMessage();
+
+    const idPlayer = params['idPlayer'];
+
+    try {
+      if (idPlayer) {
+        const result =
+          await this.challengesService.findPlayerChallenges(idPlayer);
+        return result;
+      }
+
+      const result = await this.challengesService.findAll();
+      return result;
+    } catch (error) {
+      this.logger.error(`error: ${error.message}`);
+      throw new RpcException(error.message);
+    } finally {
+      await channel.ack(originalMsg);
+    }
   }
 
-  @MessagePattern('findOneChallenge')
-  findOne(@Payload() id: number) {
-    return this.challengesService.findOne(id);
+  @MessagePattern('update-challenge')
+  update(@Payload() payload, @Ctx() context: RmqContext) {
+    const channel = context.getChannelRef();
+    const originalMsg = context.getMessage();
+    this.logger.log(`update challenge: ${JSON.stringify(payload)}`);
+
+    try {
+      const result = this.challengesService.update(
+        payload._id,
+        payload.updateChallengeDto,
+      );
+      return result;
+    } catch (error) {
+      this.logger.error(`error: ${error.message}`);
+      throw new RpcException(error.message);
+    } finally {
+      channel.ack(originalMsg);
+    }
   }
 
-  @MessagePattern('updateChallenge')
-  update(@Payload() updateChallengeDto: Challenge) {
-    return this.challengesService.update(
-      updateChallengeDto.id,
-      updateChallengeDto,
-    );
-  }
-
-  @MessagePattern('removeChallenge')
-  remove(@Payload() id: number) {
-    return this.challengesService.remove(id);
+  @MessagePattern('remove-challenge')
+  remove(@Payload() _id: string, @Ctx() context: RmqContext) {
+    const channel = context.getChannelRef();
+    const originalMsg = context.getMessage();
+    this.logger.log(`remove challenge: ${JSON.stringify(_id)}`);
+    try {
+      return this.challengesService.remove(_id);
+    } catch (error) {
+      this.logger.error(`error: ${error.message}`);
+      throw new RpcException(error.message);
+    } finally {
+      channel.ack(originalMsg);
+    }
   }
 }

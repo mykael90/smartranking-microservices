@@ -1,35 +1,37 @@
-import { Controller } from '@nestjs/common';
-import { MessagePattern, Payload } from '@nestjs/microservices';
+import { Controller, Logger } from '@nestjs/common';
+import {
+  Ctx,
+  MessagePattern,
+  Payload,
+  RmqContext,
+  RpcException,
+} from '@nestjs/microservices';
 import { GamesService } from './games.service';
 import { CreateGameDto } from './dto/create-game.dto';
 import { UpdateGameDto } from './dto/update-game.dto';
 
 @Controller()
 export class GamesController {
+  private readonly logger = new Logger(GamesController.name);
+
   constructor(private readonly gamesService: GamesService) {}
 
-  @MessagePattern('createGame')
-  create(@Payload() createGameDto: CreateGameDto) {
-    return this.gamesService.create(createGameDto);
-  }
-
-  @MessagePattern('findAllGames')
-  findAll() {
-    return this.gamesService.findAll();
-  }
-
-  @MessagePattern('findOneGame')
-  findOne(@Payload() id: number) {
-    return this.gamesService.findOne(id);
-  }
-
-  @MessagePattern('updateGame')
-  update(@Payload() updateGameDto: UpdateGameDto) {
-    return this.gamesService.update(updateGameDto.id, updateGameDto);
-  }
-
-  @MessagePattern('removeGame')
-  remove(@Payload() id: number) {
-    return this.gamesService.remove(id);
+  @MessagePattern('assign-game-to-challenge')
+  create(@Payload() payload, @Ctx() context: RmqContext) {
+    const channel = context.getChannelRef();
+    const originalMsg = context.getMessage();
+    this.logger.log(`create game: ${JSON.stringify(payload)}`);
+    try {
+      const result = this.gamesService.assignGameToChallenge(
+        payload._id,
+        payload.assignGameToChallengeDto,
+      );
+      return result;
+    } catch (error) {
+      this.logger.error(`error: ${error.message}`);
+      throw new RpcException(error.message);
+    } finally {
+      channel.ack(originalMsg);
+    }
   }
 }

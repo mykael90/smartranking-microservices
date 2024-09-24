@@ -17,6 +17,10 @@ Content-Type: {{contentType}}
 GET {{urlLocal}}
 
 
+### GET all from a player
+GET {{urlLocal}}?idPlayer=66f1dadecb49ee369f060fb1
+
+
 ### PUT
 # @prompt challenge
 PUT {{urlLocal}}/{{challenge}}
@@ -27,13 +31,18 @@ Content-Type: {{contentType}}
     "status": "ACCEPTED"
 }
 
+### DELETE
+# @prompt challenge
+DELETE {{urlLocal}}/{{challenge}}
+
+
 ### POST set a game
 # @prompt challenge
 POST {{urlLocal}}/{{challenge}}/game
 Content-Type: {{contentType}}
 
 {
-    "def": "66e09542845eaf07daf43194",
+    "def": "66f1dadecb49ee369f060fb1",
     "result": [
         {
             "set": "6-3"

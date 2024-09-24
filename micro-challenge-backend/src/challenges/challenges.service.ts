@@ -53,13 +53,15 @@ export class ChallengesService {
         throw new RpcException(`The players aren't in the same category!`);
       }
 
+      // Verify if players are already scheduled in the same time
+
       const challengeCreated = new this.challengeModel(challenge);
-      challenge.category = player1.category.name;
-      challenge.requestDate = new Date();
+      challengeCreated.category = player1.category.name;
+      challengeCreated.requestDate = new Date();
 
       //  When created the challenge status i'll be PENDING
 
-      challenge.status = ChallengeStatus.PENDING;
+      challengeCreated.status = ChallengeStatus.PENDING;
 
       return await challengeCreated.save();
     } catch (error) {
@@ -68,20 +70,85 @@ export class ChallengesService {
     }
   }
 
-  findAll() {
-    return `This action returns all challenges`;
+  async findAll(): Promise<Challenge[]> {
+    try {
+      return await this.challengeModel.find().exec();
+    } catch (error) {
+      this.logger.error(`error: ${JSON.stringify(error.message)}`);
+      throw new RpcException(error.message);
+    }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} challenge`;
+  async findPlayerChallenges(_id: string): Promise<Challenge[]> {
+    try {
+      return await this.challengeModel.find({ players: _id }).exec();
+    } catch (error) {
+      this.logger.error(`error: ${JSON.stringify(error.message)}`);
+      throw new RpcException(error.message);
+    }
   }
 
-  update(id: number, updateChallengeDto: Challenge) {
-    return `This action updates a #${id} challenge`;
+  async update(_id: string, updateChallengeDto: Challenge): Promise<Challenge> {
+    try {
+      // Verify if challenge exists
+      const challenge = await this.challengeModel.findById(_id);
+
+      if (!challenge) {
+        throw new NotFoundException(`Challenge '${_id}' not found`);
+      }
+
+      // Verify if status is PENDING
+
+      if (challenge.status !== ChallengeStatus.PENDING) {
+        throw new BadRequestException(`The challenge status isn't PENDING!`);
+      }
+
+      // Update the challenge
+
+      const challengeUpdated = this.challengeModel.findByIdAndUpdate(
+        _id,
+        { ...updateChallengeDto, responseDate: new Date() },
+        { new: true },
+      );
+
+      return challengeUpdated;
+    } catch (error) {
+      this.logger.error(`error: ${JSON.stringify(error.message)}`);
+      throw new RpcException(error.message);
+    }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} challenge`;
+  async remove(_id: string) {
+    const challenge = await this.challengeModel.findById(_id).exec();
+
+    try {
+      if (!challenge) {
+        throw new BadRequestException(`Challenge '${_id}' not registered`);
+      }
+
+      // Verify if status is PENDING
+
+      if (challenge.status !== ChallengeStatus.PENDING) {
+        throw new BadRequestException(`The challenge status isn't PENDING!`);
+      }
+
+      /**
+       * To do the logic deletion of challenge, we update the
+       * challenge status do CANCELLED
+       */
+      challenge.status = ChallengeStatus.CANCELLED;
+
+      await this.challengeModel
+        .findOneAndUpdate({ _id }, { $set: challenge })
+        .exec();
+
+      return {
+        message: `Challenge '${_id}' deleted successfully`,
+      };
+    } catch (error) {
+      this.logger.error(`error: ${JSON.stringify(error.message)}`);
+      throw new RpcException(error.message);
+    }
   }
 
   async findPlayers() {
