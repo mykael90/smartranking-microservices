@@ -47,7 +47,7 @@ export class CategoriesController {
       if (filterAckError.length > 0) {
         await channel.ack(originalMsg);
         throw new RpcException(`error: ${JSON.stringify(error.message)}`); // Throwing exception to notify the client
-        // return error;
+
       }
 
       await channel.nack(originalMsg);

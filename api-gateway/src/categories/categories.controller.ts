@@ -24,7 +24,7 @@ export class CategoriesController {
   @UsePipes(ValidationPipe)
   createCategory(@Body() createCategoryDto: CreateCategoryDto) {
     this.rabbitMQService
-      .getClientProxy()
+      .getClientProxyAdmin()
       .emit('create-category', createCategoryDto);
 
     return {
@@ -36,7 +36,7 @@ export class CategoriesController {
   @Get()
   findCategories(@Query() params: string[]) {
     return this.rabbitMQService
-      .getClientProxy()
+      .getClientProxyAdmin()
       .send('find-categories', params);
   }
 
@@ -47,7 +47,7 @@ export class CategoriesController {
     @Param('category') category: string,
   ) {
     return this.rabbitMQService
-      .getClientProxy()
+      .getClientProxyAdmin()
       .send('update-category', { updateCategoryDto, category });
   }
 
@@ -56,7 +56,7 @@ export class CategoriesController {
     @Param() params: { _idPlayer: string; category: string },
   ) {
     return this.rabbitMQService
-      .getClientProxy()
+      .getClientProxyAdmin()
       .send('assign-player-to-category', params);
   }
 }

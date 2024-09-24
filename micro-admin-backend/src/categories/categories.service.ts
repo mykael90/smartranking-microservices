@@ -4,8 +4,8 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types } from 'mongoose';
+import { InjectConnection, InjectModel } from '@nestjs/mongoose';
+import { ClientSession, Connection, Model, Types } from 'mongoose';
 import { Category } from '../mongo/schemas/category.schema';
 import { Player } from '../mongo/schemas/player.schema';
 import { RpcException } from '@nestjs/microservices';
@@ -16,6 +16,7 @@ export class CategoriesService {
     @InjectModel('Category') private readonly categoryModel: Model<Category>,
     @InjectModel('Player')
     private readonly playerModel: Model<Player>,
+    @InjectConnection() private readonly connection: Connection, // Injeta a conexão do Mongoose
   ) {}
 
   private readonly logger = new Logger(CategoriesService.name);
@@ -120,6 +121,11 @@ export class CategoriesService {
   }): Promise<Category> {
     const { category, _idPlayer } = params;
 
+    // Inicia uma sessão para a transação
+    // const session: ClientSession = await this.connection.startSession();
+
+    // session.startTransaction();
+
     try {
       const categoryFound = await this.categoryModel
         .findOne({ category })
@@ -135,7 +141,6 @@ export class CategoriesService {
         throw new NotFoundException(`Player '${_idPlayer}' not found.`);
       }
 
-      // TODO: verification not working
       const playerAlreadyInCategory = await this.categoryModel
         .find({ category })
         .where('players')
@@ -150,13 +155,37 @@ export class CategoriesService {
 
       categoryFound.players.push(player);
 
-      const result = await this.categoryModel
-        .findOneAndUpdate({ category }, { $set: categoryFound }, { new: true })
+      // update players field on category
+      const updatedCategory = await this.categoryModel
+        .findByIdAndUpdate(
+          categoryFound._id,
+          { $set: categoryFound },
+          { new: true },
+        )
         .exec();
 
-      return result;
+      console.log('categoryFound: ', categoryFound);
+
+      // update category field on player
+      player.category = categoryFound;
+
+      await this.playerModel
+        .findOneAndUpdate({ _id: _idPlayer }, { $set: player })
+        .exec();
+
+      // Confirma a transação
+      // await session.commitTransaction();
+
+      // Finaliza a sessão
+      // session.endSession();
+
+      return updatedCategory;
     } catch (error) {
       this.logger.error(`error: ${JSON.stringify(error.message)}`);
+
+      // await session.abortTransaction();
+      // session.endSession();
+
       throw new RpcException(error.message);
     }
   }

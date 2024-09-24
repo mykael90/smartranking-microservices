@@ -29,6 +29,21 @@ services:
       - mongo
       - rabbitmq
 
+  micro-challenge-backend:
+    build: ./micro-challenge-backend
+    container_name: micro-challenge-backend
+    environment:
+      ENV: ${ENV}
+    env_file:
+      - ${ENV_FILE_DB}
+      - ${ENV_FILE_RMQ}
+    volumes:
+      - ./micro-challenge-backend:/home/node/micro-challenge-backend:cached # micro-challenge-backend
+      - ./.storage/micro-challenge-backend/${ENV}:/home/node/micro-challenge-backend/storage # storage for micro-challenge-backend
+    depends_on:
+      - mongo
+      - rabbitmq
+
   mongo:
     image: mongo
     container_name: mongo

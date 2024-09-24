@@ -25,7 +25,7 @@ export class PlayersController {
   @UsePipes(ValidationPipe)
   createPlayer(@Body() createPlayerDto: CreatePlayerDto) {
     this.rabbitMQService
-      .getClientProxy()
+      .getClientProxyAdmin()
       .emit('create-player', createPlayerDto);
 
     return {
@@ -36,12 +36,14 @@ export class PlayersController {
 
   @Get()
   findPlayers() {
-    return this.rabbitMQService.getClientProxy().send('find-players', {});
+    return this.rabbitMQService.getClientProxyAdmin().send('find-players', {});
   }
 
   @Get(':_id')
   findPlayerById(@Param('_id', ParamValidationPipe) _id: string) {
-    return this.rabbitMQService.getClientProxy().send('find-player-by-id', _id);
+    return this.rabbitMQService
+      .getClientProxyAdmin()
+      .send('find-player-by-id', _id);
   }
 
   @Put(':_id')
@@ -51,12 +53,14 @@ export class PlayersController {
     @Body() updatePlayerDto: UpdatePlayerDto,
   ) {
     return this.rabbitMQService
-      .getClientProxy()
+      .getClientProxyAdmin()
       .send('update-player', { _id, updatePlayerDto });
   }
 
   @Delete(':_id')
   deletePlayer(@Param('_id', ParamValidationPipe) _id: string) {
-    return this.rabbitMQService.getClientProxy().send('delete-player', _id);
+    return this.rabbitMQService
+      .getClientProxyAdmin()
+      .send('delete-player', _id);
   }
 }

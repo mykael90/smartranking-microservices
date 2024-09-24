@@ -1,0 +1,45 @@
+### Variables
+@urlLocal = http://localhost:8080/api/v1/challenges
+@contentType = application/json
+
+### POST Challenge 1
+POST {{urlLocal}}
+Content-Type: {{contentType}}
+
+{
+    "challengeDate": "2024-09-20 16:00:00.000",
+    "requester": "66f1dad4cb49ee369f060faf",
+    "players": ["66f1dad4cb49ee369f060faf","66f1dadecb49ee369f060fb1"]
+}
+
+
+### GET all
+GET {{urlLocal}}
+
+
+### PUT
+# @prompt challenge
+PUT {{urlLocal}}/{{challenge}}
+Content-Type: {{contentType}}
+
+{
+    "challengeDate": "2024-09-20 17:00:00.000",
+    "status": "ACCEPTED"
+}
+
+### POST set a game
+# @prompt challenge
+POST {{urlLocal}}/{{challenge}}/game
+Content-Type: {{contentType}}
+
+{
+    "def": "66e09542845eaf07daf43194",
+    "result": [
+        {
+            "set": "6-3"
+        },
+        {
+            "set": "6-2"
+        }
+    ]
+}

@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import { Document, Types } from 'mongoose';
+import { Category } from './category.schema';
 
 @Schema({ timestamps: true, collection: 'players' })
 export class Player extends Document {
@@ -20,6 +21,9 @@ export class Player extends Document {
 
   @Prop()
   photo: string;
+
+  @Prop({ type: Types.ObjectId, ref: 'Category' })
+  category: Category;
 }
 
 export const PlayerSchema = SchemaFactory.createForClass(Player);
