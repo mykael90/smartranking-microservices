@@ -62,7 +62,7 @@ export class CategoriesService {
       const players = await this.playerModel.find().exec();
 
       const playerFiltered = players.filter(
-        (player) => player._id == _idPlayer,
+        (player) => player._id.toString() == _idPlayer,
       );
 
       if (playerFiltered.length == 0) {
@@ -116,8 +116,8 @@ export class CategoriesService {
   }
 
   async assignPlayerToCategory(params: {
-    _idPlayer: string;
-    category: string;
+    _idPlayer: Types.ObjectId | string;
+    category: Types.ObjectId | string;
   }): Promise<Category> {
     const { category, _idPlayer } = params;
 
@@ -153,7 +153,7 @@ export class CategoriesService {
         );
       }
 
-      categoryFound.players.push(player);
+      categoryFound.players.push(player._id);
 
       // update players field on category
       const updatedCategory = await this.categoryModel
@@ -167,7 +167,7 @@ export class CategoriesService {
       console.log('categoryFound: ', categoryFound);
 
       // update category field on player
-      player.category = categoryFound;
+      player.category = categoryFound._id;
 
       await this.playerModel
         .findOneAndUpdate({ _id: _idPlayer }, { $set: player })

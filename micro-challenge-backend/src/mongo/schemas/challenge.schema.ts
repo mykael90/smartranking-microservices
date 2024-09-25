@@ -2,9 +2,12 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
 import { Game } from './game.schema';
 import { ChallengeStatus } from './challenge-status.enum';
+import { GamesController } from '../../games/games.controller';
 
 @Schema({ timestamps: true, collection: 'challenges' })
 export class Challenge extends Document {
+  _id: Types.ObjectId;
+
   @Prop()
   challengeDate: Date;
 
@@ -18,16 +21,16 @@ export class Challenge extends Document {
   responseDate: Date;
 
   @Prop({ type: Types.ObjectId })
-  requester: string;
+  requester: Types.ObjectId;
 
-  @Prop()
-  category: string;
+  @Prop({ type: Types.ObjectId })
+  category: Types.ObjectId;
 
   @Prop({ type: [{ type: Types.ObjectId }] })
-  players: string[];
+  players: Types.ObjectId[];
 
-  @Prop({ type: Types.ObjectId, ref: 'Game' })
-  game: Game;
+  @Prop({ type: Types.ObjectId, ref: Game.name })
+  game: Types.ObjectId;
 }
 
 export const ChallengeSchema = SchemaFactory.createForClass(Challenge);

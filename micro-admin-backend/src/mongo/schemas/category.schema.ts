@@ -16,6 +16,8 @@ const EventSchema = new MongooseSchema<Event>({
 
 @Schema({ timestamps: true, collection: 'categories' })
 export class Category extends Document {
+  _id: Types.ObjectId;
+
   @Prop({ unique: true })
   category: string;
 
@@ -25,8 +27,8 @@ export class Category extends Document {
   @Prop({ type: [EventSchema] })
   events: Event[];
 
-  @Prop({ type: [{ type: Types.ObjectId, ref: 'Player' }] })
-  players: Player[];
+  @Prop({ type: [{ type: Types.ObjectId, ref: Player.name }] })
+  players: Types.ObjectId[];
 }
 
 export const CategorySchema = SchemaFactory.createForClass(Category);

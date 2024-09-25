@@ -10,6 +10,7 @@ import {
 } from '@nestjs/microservices';
 import { Category } from '../mongo/schemas/category.schema';
 import { NotFoundError } from 'rxjs';
+import { transformObjectId } from '../utils/string-to-objectid';
 
 const ackErrors: string[] = [];
 
@@ -33,6 +34,8 @@ export class CategoriesController {
 
     this.logger.log(`create category: ${JSON.stringify(category)}`);
 
+    category = transformObjectId(category);
+
     try {
       await this.categoriesService.createCategory(category);
 
@@ -47,7 +50,6 @@ export class CategoriesController {
       if (filterAckError.length > 0) {
         await channel.ack(originalMsg);
         throw new RpcException(`error: ${JSON.stringify(error.message)}`); // Throwing exception to notify the client
-
       }
 
       await channel.nack(originalMsg);
@@ -135,6 +137,7 @@ export class CategoriesController {
   ) {
     const channel = context.getChannelRef();
     const originalMsg = context.getMessage();
+    payload = transformObjectId(payload);
     try {
       const result =
         await this.categoriesService.assignPlayerToCategory(payload);

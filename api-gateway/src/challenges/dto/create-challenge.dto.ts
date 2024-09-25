@@ -3,8 +3,10 @@ import {
   ArrayMinSize,
   IsArray,
   IsDateString,
+  IsMongoId,
   IsNotEmpty,
 } from 'class-validator';
+import { Types } from 'mongoose';
 
 export class CreateChallengeDto {
   @IsNotEmpty()
@@ -12,10 +14,12 @@ export class CreateChallengeDto {
   challengeDate: Date;
 
   @IsNotEmpty()
-  requester: object;
+  @IsMongoId() // Valida se a string é um ObjectId
+  requester: Types.ObjectId; // O campo final será do tipo ObjectId
 
   @IsArray()
   @ArrayMinSize(2)
   @ArrayMaxSize(2)
-  players: object[];
+  @IsMongoId({ each: true })
+  players: Types.ObjectId[];
 }

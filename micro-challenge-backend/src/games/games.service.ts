@@ -31,7 +31,7 @@ export class GamesService {
      * Verify if the winner is in the challenge
      */
     const playerFiltered = challenge.players.filter(
-      (player) => player == assignGameToChallengeDto.def,
+      (player) => player.toString() == assignGameToChallengeDto.def.toString(),
     );
 
     if (playerFiltered.length == 0) {
@@ -64,7 +64,7 @@ export class GamesService {
     /**
      * Recover the game and assign to challenge
      */
-    challenge.game = result;
+    challenge.game = result._id;
 
     try {
       return await this.challengeModel

@@ -33,7 +33,7 @@ export class PlayersService {
 
   findOne(_id: string): Promise<Player> {
     try {
-      return this.playerModel.findById(_id).populate('category').exec();
+      return this.playerModel.findById(_id).exec();
     } catch (error) {
       this.logger.error(`error: ${JSON.stringify(error.message)}`);
       throw new RpcException(error.message);

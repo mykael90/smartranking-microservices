@@ -7,17 +7,19 @@ export interface Result {
 
 @Schema({ timestamps: true, collection: 'games' })
 export class Game extends Document {
+  _id: Types.ObjectId;
+
   @Prop({ type: Types.ObjectId, ref: 'Challenge' })
-  challenge: string;
+  challenge: Types.ObjectId;
 
   @Prop({ type: Types.ObjectId })
-  category: string;
+  category: Types.ObjectId;
 
   @Prop({ type: [{ type: Types.ObjectId }] })
-  players: string[];
+  players: Types.ObjectId[];
 
   @Prop({ type: Types.ObjectId })
-  def: string;
+  def: Types.ObjectId;
 
   @Prop({ type: [{ set: { type: String } }] })
   result: Result[];

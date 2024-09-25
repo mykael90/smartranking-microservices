@@ -3,8 +3,6 @@ import {
   Injectable,
   Logger,
   NotFoundException,
-  Param,
-  Query,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
@@ -14,6 +12,7 @@ import { Game } from '../mongo/schemas/game.schema';
 import { RabbitMQService } from '../rabbitmq/rabbitmq.service';
 import { lastValueFrom } from 'rxjs';
 import { ChallengeStatus } from '../mongo/schemas/challenge-status.enum';
+import { transformObjectId } from '../utils/string-to-objectid';
 
 @Injectable()
 export class ChallengesService {
@@ -30,7 +29,7 @@ export class ChallengesService {
       // Verify if requester is a player in the challenge
 
       const requester = challenge.players.find(
-        (player) => player === challenge.requester,
+        (player) => player.toString() === challenge.requester.toString(),
       );
 
       if (!requester) {
@@ -40,8 +39,12 @@ export class ChallengesService {
       }
 
       // Verify if players are registered
-      const player1 = await this.findPlayerById(challenge.players[0]);
-      const player2 = await this.findPlayerById(challenge.players[1]);
+      const player1 = await this.findPlayerById(
+        challenge.players[0].toString(),
+      );
+      const player2 = await this.findPlayerById(
+        challenge.players[1].toString(),
+      );
 
       if (!player1 || !player2) {
         throw new RpcException(`One or more players aren't registered!`);
@@ -49,14 +52,14 @@ export class ChallengesService {
 
       // Verify if players are in the same category
 
-      if (player1.category._id.toString() !== player2.category._id.toString()) {
+      if (player1.category.toString() !== player2.category.toString()) {
         throw new RpcException(`The players aren't in the same category!`);
       }
 
       // Verify if players are already scheduled in the same time
 
       const challengeCreated = new this.challengeModel(challenge);
-      challengeCreated.category = player1.category.name;
+      challengeCreated.category = player1.category;
       challengeCreated.requestDate = new Date();
 
       //  When created the challenge status i'll be PENDING
@@ -152,22 +155,28 @@ export class ChallengesService {
   }
 
   async findPlayers() {
-    return await lastValueFrom(
+    const result = await lastValueFrom(
       this.rabbitMQService.getClientProxyAdmin().send('find-players', {}),
     );
+
+    return transformObjectId(result);
   }
 
   async findCategories(category: string) {
-    return await lastValueFrom(
+    const resut = await lastValueFrom(
       this.rabbitMQService
         .getClientProxyAdmin()
         .send('find-categories', category),
     );
+
+    return transformObjectId(resut);
   }
 
   async findPlayerById(_id: string) {
-    return await lastValueFrom(
+    const result = await lastValueFrom(
       this.rabbitMQService.getClientProxyAdmin().send('find-player-by-id', _id),
     );
+
+    return transformObjectId(result);
   }
 }

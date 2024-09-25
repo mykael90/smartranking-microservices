@@ -9,6 +9,7 @@ import {
 } from '@nestjs/microservices';
 import { ChallengesService } from './challenges.service';
 import { Challenge } from '../mongo/schemas/challenge.schema';
+import { transformObjectId } from '../utils/string-to-objectid';
 
 const ackErrors: string[] = [];
 
@@ -27,8 +28,7 @@ export class ChallengesController {
   ) {
     const channel = context.getChannelRef();
     const originalMsg = context.getMessage();
-
-    this.logger.log(`create challenge: ${JSON.stringify(createChallengeDto)}`);
+    createChallengeDto = transformObjectId(createChallengeDto);
 
     try {
       const result = await this.challengesService.create(createChallengeDto);

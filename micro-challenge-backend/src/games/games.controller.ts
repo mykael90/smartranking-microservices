@@ -7,8 +7,7 @@ import {
   RpcException,
 } from '@nestjs/microservices';
 import { GamesService } from './games.service';
-import { CreateGameDto } from './dto/create-game.dto';
-import { UpdateGameDto } from './dto/update-game.dto';
+import { transformObjectId } from '../utils/string-to-objectid';
 
 @Controller()
 export class GamesController {
@@ -20,6 +19,9 @@ export class GamesController {
   create(@Payload() payload, @Ctx() context: RmqContext) {
     const channel = context.getChannelRef();
     const originalMsg = context.getMessage();
+
+    payload = transformObjectId(payload);
+
     this.logger.log(`create game: ${JSON.stringify(payload)}`);
     try {
       const result = this.gamesService.assignGameToChallenge(

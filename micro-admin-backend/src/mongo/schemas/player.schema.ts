@@ -4,6 +4,8 @@ import { Category } from './category.schema';
 
 @Schema({ timestamps: true, collection: 'players' })
 export class Player extends Document {
+  _id: Types.ObjectId;
+
   @Prop({ unique: true })
   email: string;
 
@@ -23,7 +25,7 @@ export class Player extends Document {
   photo: string;
 
   @Prop({ type: Types.ObjectId, ref: 'Category' })
-  category: Category;
+  category: Types.ObjectId;
 }
 
 export const PlayerSchema = SchemaFactory.createForClass(Player);
