@@ -43,6 +43,9 @@ export class GamesService {
      */
     const game = new this.gameModel(assignGameToChallengeDto);
 
+    // Assign the object game to challenge
+    game.challenge = challenge._id;
+
     /**
      * Assign the object game to category recovered in challenge
      */
