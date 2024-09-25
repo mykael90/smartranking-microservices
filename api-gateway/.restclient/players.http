@@ -37,3 +37,15 @@ Content-Type: {{contentType}}
 
 ### DELETE
 DELETE {{urlLocal}}/{{player.response.body._id}}
+
+### UPLOAD PHOTO
+# @prompt playerId
+POST {{urlLocal}}/{{playerId}}/upload
+Content-Type: multipart/form-data; boundary=MfnBoundry
+
+--MfnBoundry
+Content-Disposition: form-data; name="file"; filename="imageNest.png"
+Content-Type: image/png
+
+< ./api-gateway/imageNest.png
+--MfnBoundry--

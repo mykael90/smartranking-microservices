@@ -31,18 +31,24 @@ export class PlayersService {
     }
   }
 
-  findOne(_id: string): Promise<Player> {
+  async findOne(_id: string): Promise<Player> {
     try {
-      return this.playerModel.findById(_id).exec();
+      const player = await this.playerModel.findById(_id).exec();
+
+      if (!player) {
+        throw new NotFoundException(`Player '${_id}' not found`);
+      }
+
+      return player;
     } catch (error) {
       this.logger.error(`error: ${JSON.stringify(error.message)}`);
       throw new RpcException(error.message);
     }
   }
 
-  update(_id: string, updatePlayerDto: Player): Promise<Player> {
+  async update(_id: string, updatePlayerDto: Player): Promise<Player> {
     try {
-      const result = this.playerModel
+      const result = await this.playerModel
         .findByIdAndUpdate(_id, updatePlayerDto, {
           new: true,
         })

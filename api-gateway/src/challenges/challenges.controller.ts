@@ -16,8 +16,6 @@ import { CreateChallengeDto } from './dto/create-challenge.dto';
 import { UpdateChallengeDto } from './dto/update-challenge.dto';
 import { ChallengeStatusValidationPipe } from './pipes/challenge-status-validation.pipe';
 import { AssignGameToChallengeDto } from '../games/dto/assign-game-to-challenge.dto';
-import { ObjectIdPipe } from '../common/pipes/string-to-objectid.pipe';
-import { Types } from 'mongoose';
 
 @Controller('api/v1/challenges')
 export class ChallengesController {
