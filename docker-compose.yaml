@@ -11,6 +11,7 @@ services:
       - ${ENV_FILE_RMQ}
     volumes:
       - ./api-gateway:/home/node/api-gateway:cached # api-gateway
+      - ./.storage/api-gateway/${ENV}:/home/node/api-gateway/storage # storage for micro-admin-backend
     depends_on:
       - rabbitmq
 
