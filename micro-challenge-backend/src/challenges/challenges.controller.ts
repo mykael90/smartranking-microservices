@@ -47,7 +47,7 @@ export class ChallengesController {
 
     const originalMsg = context.getMessage();
 
-    const idPlayer = params['idPlayer'];
+    const idPlayer = transformObjectId(params['idPlayer']);
 
     try {
       if (idPlayer) {
@@ -72,6 +72,8 @@ export class ChallengesController {
     const originalMsg = context.getMessage();
     this.logger.log(`update challenge: ${JSON.stringify(payload)}`);
 
+    payload = transformObjectId(payload);
+
     try {
       const result = this.challengesService.update(
         payload._id,
@@ -87,10 +89,13 @@ export class ChallengesController {
   }
 
   @MessagePattern('remove-challenge')
-  remove(@Payload() _id: string, @Ctx() context: RmqContext) {
+  remove(@Payload() _id, @Ctx() context: RmqContext) {
     const channel = context.getChannelRef();
     const originalMsg = context.getMessage();
     this.logger.log(`remove challenge: ${JSON.stringify(_id)}`);
+
+    _id = transformObjectId(_id);
+
     try {
       return this.challengesService.remove(_id);
     } catch (error) {

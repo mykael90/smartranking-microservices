@@ -9,8 +9,8 @@ Content-Type: {{contentType}}
 
 {
     "phone": "84 9999-5958",
-    "email": "flavio@provider.com",
-    "name": "Flavio Campos"
+    "email": "aline@provider.com",
+    "name": "Aline Campos"
 }
 
 ### GET all

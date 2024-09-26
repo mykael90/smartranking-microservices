@@ -82,16 +82,22 @@ export class ChallengesService {
     }
   }
 
-  async findPlayerChallenges(_id: string): Promise<Challenge[]> {
+  async findPlayerChallenges(_id: Types.ObjectId): Promise<Challenge[]> {
     try {
-      return await this.challengeModel.find({ players: _id }).exec();
+      console.log(`_id: ${_id}`);
+      return await this.challengeModel
+        .find({ players: new Types.ObjectId(_id) })
+        .exec();
     } catch (error) {
       this.logger.error(`error: ${JSON.stringify(error.message)}`);
       throw new RpcException(error.message);
     }
   }
 
-  async update(_id: string, updateChallengeDto: Challenge): Promise<Challenge> {
+  async update(
+    _id: Types.ObjectId,
+    updateChallengeDto: Challenge,
+  ): Promise<Challenge> {
     try {
       // Verify if challenge exists
       const challenge = await this.challengeModel.findById(_id);
@@ -121,7 +127,7 @@ export class ChallengesService {
     }
   }
 
-  async remove(_id: string) {
+  async remove(_id: Types.ObjectId) {
     const challenge = await this.challengeModel.findById(_id).exec();
 
     try {

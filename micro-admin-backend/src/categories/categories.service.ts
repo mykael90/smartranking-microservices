@@ -143,8 +143,7 @@ export class CategoriesService {
 
       const playerAlreadyInCategory = await this.categoryModel
         .find({ category })
-        .where('players')
-        .in([player])
+        .where('players', { $in: [player._id] })
         .exec();
 
       if (playerAlreadyInCategory.length > 0) {

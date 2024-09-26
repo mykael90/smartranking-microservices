@@ -8,8 +8,8 @@ Content-Type: {{contentType}}
 
 {
     "challengeDate": "2024-09-20 16:00:00.000",
-    "requester": "66f413ac0416349b59f69056",
-    "players": ["66f413ac0416349b59f69056","66f413b90416349b59f69058"]
+    "requester": "66f5b2ed59148b0be84ce7b5",
+    "players": ["66f5b2ed59148b0be84ce7b5","66f5b2f359148b0be84ce7b7"]
 }
 
 
@@ -18,7 +18,7 @@ GET {{urlLocal}}
 
 
 ### GET all from a player
-GET {{urlLocal}}?idPlayer=66f413b90416349b59f69058
+GET {{urlLocal}}?idPlayer=66f5b30159148b0be84ce7be
 
 
 ### PUT
@@ -42,7 +42,7 @@ POST {{urlLocal}}/{{challenge}}/game
 Content-Type: {{contentType}}
 
 {
-    "def": "66f413b90416349b59f69058",
+    "def": "66f5b2f359148b0be84ce7b7",
     "result": [
         {
             "set": "6-3"
