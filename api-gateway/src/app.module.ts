@@ -7,6 +7,7 @@ import { CategoriesModule } from './categories/categories.module';
 import { RabbitMQModule } from './rabbitmq/rabbitmq.module';
 import { ChallengesModule } from './challenges/challenges.module';
 import { GamesModule } from './games/games.module';
+import { ScoresModule } from './scores/scores.module';
 @Module({
   imports: [
     RabbitMQModule,
@@ -14,6 +15,7 @@ import { GamesModule } from './games/games.module';
     CategoriesModule,
     ChallengesModule,
     GamesModule,
+    ScoresModule,
   ],
   controllers: [],
   providers: [

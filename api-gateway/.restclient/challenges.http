@@ -18,7 +18,12 @@ GET {{urlLocal}}
 
 
 ### GET all from a player
-GET {{urlLocal}}?idPlayer=66f5b30159148b0be84ce7be
+# @prompt idPlayer
+GET {{urlLocal}}?idPlayer={{idPlayer}}
+
+### GET all from a category
+# @prompt idCategory
+GET {{urlLocal}}?idCategory={{idCategory}}
 
 
 ### PUT

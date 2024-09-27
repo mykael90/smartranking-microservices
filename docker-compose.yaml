@@ -45,6 +45,21 @@ services:
       - mongo
       - rabbitmq
 
+  micro-ranking-backend:
+    build: ./micro-ranking-backend
+    container_name: micro-ranking-backend
+    environment:
+      ENV: ${ENV}
+    env_file:
+      - ${ENV_FILE_DB}
+      - ${ENV_FILE_RMQ}
+    volumes:
+      - ./micro-ranking-backend:/home/node/micro-ranking-backend:cached # micro-ranking-backend
+      - ./.storage/micro-ranking-backend/${ENV}:/home/node/micro-ranking-backend/storage # storage for micro-ranking-backend
+    depends_on:
+      - mongo
+      - rabbitmq
+
   mongo:
     image: mongo
     container_name: mongo

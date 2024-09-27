@@ -49,10 +49,20 @@ export class ChallengesController {
 
     const idPlayer = transformObjectId(params['idPlayer']);
 
+    const idCategory = transformObjectId(params['idCategory']);
+
+    this.logger.log(`find challenges: ${JSON.stringify(params)}`);
+
     try {
       if (idPlayer) {
         const result =
           await this.challengesService.findPlayerChallenges(idPlayer);
+        return result;
+      }
+
+      if (idCategory) {
+        const result =
+          await this.challengesService.findCategoryChallenges(idCategory);
         return result;
       }
 

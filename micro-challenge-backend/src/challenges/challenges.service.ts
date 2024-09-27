@@ -94,6 +94,18 @@ export class ChallengesService {
     }
   }
 
+  async findCategoryChallenges(_id: Types.ObjectId): Promise<Challenge[]> {
+    try {
+      console.log(`_id: ${_id}`);
+      return await this.challengeModel
+        .find({ category: new Types.ObjectId(_id) })
+        .exec();
+    } catch (error) {
+      this.logger.error(`error: ${JSON.stringify(error.message)}`);
+      throw new RpcException(error.message);
+    }
+  }
+
   async update(
     _id: Types.ObjectId,
     updateChallengeDto: Challenge,

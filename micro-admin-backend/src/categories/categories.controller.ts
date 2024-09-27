@@ -1,4 +1,4 @@
-import { Controller, Logger, NotFoundException } from '@nestjs/common';
+import { Controller, Logger } from '@nestjs/common';
 import { CategoriesService } from './categories.service';
 import {
   Ctx,
@@ -9,7 +9,6 @@ import {
   RpcException,
 } from '@nestjs/microservices';
 import { Category } from '../mongo/schemas/category.schema';
-import { NotFoundError } from 'rxjs';
 import { transformObjectId } from '../utils/string-to-objectid';
 
 const ackErrors: string[] = [];
@@ -65,7 +64,9 @@ export class CategoriesController {
 
     const originalMsg = context.getMessage();
 
-    const category = params['category'];
+    params = transformObjectId(params);
+
+    const idCategory = params['idCategory'];
 
     const idPlayer = params['idPlayer'];
 
@@ -77,9 +78,9 @@ export class CategoriesController {
         return result;
       }
 
-      if (category) {
+      if (idCategory) {
         const result =
-          await this.categoriesService.findCategoryByCategory(category);
+          await this.categoriesService.findCategoryByIdCategory(idCategory);
         return result;
       }
 
@@ -103,7 +104,6 @@ export class CategoriesController {
     const originalMsg = context.getMessage();
 
     this.logger.log(`upload category: ${JSON.stringify(payload.category)}`);
-    this.logger.log(JSON.stringify(payload.updateCategoryDto));
 
     try {
       const result = await this.categoriesService.updateCategory(
@@ -132,11 +132,12 @@ export class CategoriesController {
 
   @MessagePattern('assign-player-to-category')
   async assignPlayerToCategory(
-    @Payload() payload: { _idPlayer: string; category: string },
+    @Payload() payload: { idPlayer: string; idCategory: string },
     @Ctx() context: RmqContext,
   ) {
     const channel = context.getChannelRef();
     const originalMsg = context.getMessage();
+    this.logger.log(`assign player to category: ${JSON.stringify(payload)}`);
     payload = transformObjectId(payload);
     try {
       const result =

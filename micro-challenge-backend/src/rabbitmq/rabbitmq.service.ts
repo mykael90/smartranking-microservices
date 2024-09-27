@@ -9,10 +9,12 @@ import {
 export class RabbitMQService {
   private clientAdminBackend: ClientProxy;
   private clientChallengeBackend: ClientProxy;
+  private clientRankingBackend: ClientProxy;
 
   constructor() {
     this.clientAdminBackend = this.createClientProxy('admin-backend');
     this.clientChallengeBackend = this.createClientProxy('challenge-backend');
+    this.clientRankingBackend = this.createClientProxy('ranking-backend');
   }
 
   // Método auxiliar para criar um cliente RabbitMQ
@@ -39,5 +41,10 @@ export class RabbitMQService {
   // Método para obter o cliente da fila 'user-backend'
   getClientProxyChallenge(): ClientProxy {
     return this.clientChallengeBackend;
+  }
+
+  // Método para obter o cliente da fila 'ranking-backend'
+  getClientProxyRanking(): ClientProxy {
+    return this.clientRankingBackend;
   }
 }

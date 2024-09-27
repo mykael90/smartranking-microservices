@@ -51,9 +51,9 @@ export class CategoriesController {
       .send('update-category', { updateCategoryDto, category });
   }
 
-  @Post('/:category/players/:_idPlayer')
+  @Post('/:idCategory/players/:idPlayer')
   assignPlayerToCategory(
-    @Param() params: { _idPlayer: string; category: string },
+    @Param() params: { idPlayer: string; idCategory: string },
   ) {
     return this.rabbitMQService
       .getClientProxyAdmin()

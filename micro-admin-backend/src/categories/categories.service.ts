@@ -40,14 +40,14 @@ export class CategoriesService {
     }
   }
 
-  async findCategoryByCategory(category: string): Promise<Category> {
+  async findCategoryByIdCategory(idCategory: string): Promise<Category> {
     try {
       const categoryFound = await this.categoryModel
-        .findOne({ category })
+        .findById(idCategory)
         .exec();
 
       if (!categoryFound) {
-        throw new NotFoundException(`Category '${category}' not found`);
+        throw new NotFoundException(`Category '${idCategory}' not found`);
       }
 
       return categoryFound;
@@ -116,39 +116,41 @@ export class CategoriesService {
   }
 
   async assignPlayerToCategory(params: {
-    _idPlayer: Types.ObjectId | string;
-    category: Types.ObjectId | string;
+    idPlayer: Types.ObjectId | string;
+    idCategory: Types.ObjectId | string;
   }): Promise<Category> {
-    const { category, _idPlayer } = params;
+    const { idCategory, idPlayer } = params;
 
     // Inicia uma sessão para a transação
     // const session: ClientSession = await this.connection.startSession();
 
     // session.startTransaction();
 
+    console.log('params', params);
+
     try {
       const categoryFound = await this.categoryModel
-        .findOne({ category })
+        .findById(idCategory)
         .exec();
 
       if (!categoryFound) {
-        throw new NotFoundException(`Category '${category}' not found.`);
+        throw new NotFoundException(`Category '${idCategory}' not found.`);
       }
 
-      const player = await this.playerModel.findById(_idPlayer).exec();
+      const player = await this.playerModel.findById(idPlayer).exec();
 
       if (!player) {
-        throw new NotFoundException(`Player '${_idPlayer}' not found.`);
+        throw new NotFoundException(`Player '${idPlayer}' not found.`);
       }
 
       const playerAlreadyInCategory = await this.categoryModel
-        .find({ category })
+        .find({ _id: categoryFound._id })
         .where('players', { $in: [player._id] })
         .exec();
 
       if (playerAlreadyInCategory.length > 0) {
         throw new BadRequestException(
-          `Player '${_idPlayer}' already in the category '${category}'`,
+          `Player '${idPlayer}' already in the category '${idCategory}'`,
         );
       }
 
@@ -169,7 +171,7 @@ export class CategoriesService {
       player.category = categoryFound._id;
 
       await this.playerModel
-        .findOneAndUpdate({ _id: _idPlayer }, { $set: player })
+        .findOneAndUpdate({ _id: idPlayer }, { $set: player })
         .exec();
 
       // Confirma a transação

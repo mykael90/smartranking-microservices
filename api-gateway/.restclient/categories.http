@@ -83,18 +83,18 @@ Content-Type: {{contentType}}
 ### GET all
 GET {{urlLocal}}
 
-### GET all by category
-# @prompt category
-GET {{urlLocal}}?category={{category}}
+### GET all by IdCategory
+# @prompt idCategory
+GET {{urlLocal}}?idCategory={{idCategory}}
 
 ### GET all by idPlayer 
 # @prompt idPlayer
 GET {{urlLocal}}?idPlayer={{idPlayer}}
 
 ### POST insert a player in a category
-# @prompt category
+# @prompt idCategory
 # @prompt playerId
-POST {{urlLocal}}/{{category}}/players/{{playerId}}
+POST {{urlLocal}}/{{idCategory}}/players/{{playerId}}
 
 ### PUT
 # @prompt category
