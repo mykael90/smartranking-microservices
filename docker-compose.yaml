@@ -45,6 +45,19 @@ services:
       - mongo
       - rabbitmq
 
+  micro-notifications:
+    build: ./micro-notifications
+    container_name: micro-notifications
+    environment:
+      ENV: ${ENV}
+    env_file:
+      - ${ENV_FILE_MAILER}
+      - ${ENV_FILE_RMQ}
+    volumes:
+      - ./micro-notifications:/home/node/micro-notifications:cached # micro-notifications
+    depends_on:
+      - rabbitmq
+
   micro-ranking-backend:
     build: ./micro-ranking-backend
     container_name: micro-ranking-backend

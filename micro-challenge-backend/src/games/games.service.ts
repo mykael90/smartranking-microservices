@@ -70,14 +70,17 @@ export class GamesService {
     challenge.game = result._id;
 
     try {
-      /* Update score */
-      this.rabbitMQService.getClientProxyRanking().emit('create-score', result);
-
-      /* Update challenge and return to client */
-      return await this.challengeModel
+      /* Update challenge */
+      const updatedChallenge = this.challengeModel
         .findOneAndUpdate({ _id }, { $set: challenge }, { new: true })
         .populate('game')
         .exec();
+
+      /* Update score */
+      this.rabbitMQService.getClientProxyRanking().emit('create-score', result);
+
+      /* Return updated challenge to client */
+      return updatedChallenge;
     } catch (error) {
       /**
        * If the challenge update fails, we exclude the game saved before

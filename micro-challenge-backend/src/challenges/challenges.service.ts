@@ -50,6 +50,12 @@ export class ChallengesService {
         throw new RpcException(`One or more players aren't registered!`);
       }
 
+      // Verify if players are in some category
+
+      if (!player1.category || !player2.category) {
+        throw new RpcException(`One or more players don't have category!`);
+      }
+
       // Verify if players are in the same category
 
       if (player1.category.toString() !== player2.category.toString()) {
@@ -66,7 +72,16 @@ export class ChallengesService {
 
       challengeCreated.status = ChallengeStatus.PENDING;
 
-      return await challengeCreated.save();
+      // Save the challenge
+      await challengeCreated.save();
+
+      // Notificate challenged player
+      this.rabbitMQService
+        .getClientProxyNotification()
+        .emit('new-challenge', challengeCreated);
+
+      // Return the challenge created
+      return challengeCreated;
     } catch (error) {
       this.logger.error(`error: ${JSON.stringify(error.message)}`);
       throw new RpcException(error.message);

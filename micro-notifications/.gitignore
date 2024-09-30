@@ -25,7 +25,7 @@ lerna-debug.log*
 .classpath
 .c9/
 *.launch
-# .settings/
+.settings/
 *.sublime-workspace
 
 # IDE - VSCode
@@ -36,18 +36,11 @@ lerna-debug.log*
 !.vscode/extensions.json
 
 # dotenv environment variable files
-/env/*prod
-/_env/*prod
-/_env/*mailer.dev
+.env
 .env.development.local
 .env.test.local
 .env.production.local
 .env.local
-# .env.db.dev
-# .env.db.prod
-# .env.rmq.dev
-# .env.rmq.prod
-
 
 # temp directory
 .temp
@@ -61,11 +54,3 @@ pids
 
 # Diagnostic reports (https://nodejs.org/api/report.html)
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
-
-#Storages
-/.storage/*/*/*
-!/.storage/*/*/.gitkeep
-
-#Data
-/data/*/*/*
-!/data/*/*/.gitkeep
