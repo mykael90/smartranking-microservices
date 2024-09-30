@@ -12,24 +12,19 @@ export class NotificationsService {
     private readonly rabbitMQService: RabbitMQService,
   ) {}
 
-  async newChallenge(params: any) {
+  async newChallenge({ requester: requesterId, challengeDate, players }: any) {
     // TODO: Pegar o e-mail do usuário que desafiou e outras informações com o cliente RabbitMQ
-    const { requester: requesterId, challengeDate, players } = params;
 
     const date = new Date(challengeDate);
 
     const [challengeDateFormat, challengeTimeFormat] = momentTimezone(date)
-      .format('DD/MM/YYYY HH:mm:ss')
+      .format('DD/MM/YYYY HH:mm')
       .split(' ');
 
     const requester = await lastValueFrom(
       this.rabbitMQService
         .getClientProxyAdmin()
         .send('find-player-by-id', requesterId.toString()),
-    );
-
-    console.log(
-      `requester: ${requesterId}, requester: ${JSON.stringify(requester)}, challengeDate: ${challengeDate}`,
     );
 
     const challengedId = players.find(
@@ -40,10 +35,6 @@ export class NotificationsService {
       this.rabbitMQService
         .getClientProxyAdmin()
         .send('find-player-by-id', challengedId.toString()),
-    );
-
-    console.log(
-      `challenged: ${challengedId}, challenged: ${JSON.stringify(challenged)}`,
     );
 
     // Envia um email de notificação usando o serviço de e-mail
@@ -58,8 +49,6 @@ export class NotificationsService {
         challengeHour: challengeTimeFormat,
       },
     );
-
-    return;
 
     // TODO: Implementar o envio de notificação por outros meios
     // Por exemplo: SMS, WhatsApp, etc.
