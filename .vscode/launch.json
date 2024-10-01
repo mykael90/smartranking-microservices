@@ -11,8 +11,11 @@
             "port": 9229,
             "address": "localhost",
             "localRoot": "${workspaceFolder}/api-gateway",
-            "remoteRoot": "/home/node/api-gateway",
-            "restart": true
+            "remoteRoot": "/home/node/api-gateway/",
+            "restart": true,
+            "skipFiles": [
+                "<node_internals>/**"
+            ],            
           },
     ]
 }
