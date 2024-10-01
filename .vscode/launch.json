@@ -17,5 +17,19 @@
                 "<node_internals>/**"
             ],            
           },
+
+          {
+            "type": "node",
+            "request": "attach",
+            "name": "Debug Microservice Admin",
+            "port": 9230,
+            "address": "localhost",
+            "localRoot": "${workspaceFolder}/micro-admin-backend",
+            "remoteRoot": "/home/node/micro-admin-backend/",
+            "restart": true,
+            "skipFiles": [
+                "<node_internals>/**"
+            ],            
+          },
     ]
 }

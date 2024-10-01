@@ -19,7 +19,7 @@ async function bootstrap() {
 
   logger.log(`Api-Gateway is listening on port 8080`);
 
-  // Se o modo de depuração estiver ativo, inicie o debugger manualmente
+  // Se o modo de desenvolvimento estiver ativo, inicie o debugger manualmente
   if (process.env.ENV === 'dev') {
     const inspector = await import('inspector');
     inspector.open(9229, '0.0.0.0'); // Abra o debugger na porta 9229 para todas as interfaces

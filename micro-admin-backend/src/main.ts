@@ -21,5 +21,12 @@ async function bootstrap() {
 
   await app.listen();
   logger.log('Admin microservice is listening...');
+
+  // Se o modo de desenvolvimento estiver ativo, inicie o debugger manualmente
+  if (process.env.ENV === 'dev') {
+    const inspector = await import('inspector');
+    inspector.open(9229, '0.0.0.0'); // Abra o debugger na porta 9229 para todas as interfaces
+    logger.log('Debugger listening on port 9229');
+  }
 }
 bootstrap();
