@@ -5,7 +5,7 @@ npm i
 
 wait
 
-# npm run start:dev
+npm run start:dev
 
 # Executa indefinitamente
-tail -f /dev/null
+# tail -f /dev/null

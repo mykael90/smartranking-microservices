@@ -1,0 +1,5 @@
+cd smartranking-microservices && docker compose logs api-gateway -f
+cd smartranking-microservices && docker compose logs micro-admin-backend -f
+cd smartranking-microservices && docker compose logs micro-challenge-backend -f
+cd smartranking-microservices && docker compose logs micro-ranking-backend -f
+cd smartranking-microservices && docker compose logs micro-notifications -f

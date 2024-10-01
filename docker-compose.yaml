@@ -5,6 +5,7 @@ services:
     container_name: api-gateway
     ports:
       - "8080:8080"
+      - "9229:9229"  # Porta para o debug do Visual Studio Code
     environment:
       ENV: ${ENV}
     env_file:
@@ -18,6 +19,8 @@ services:
   micro-admin-backend:
     build: ./micro-admin-backend
     container_name: micro-admin-backend
+    ports:
+    - "9230:9229"  # Porta para o debug do Micro Admin Backend (9230 no host)
     environment:
       ENV: ${ENV}
     env_file:
