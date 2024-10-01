@@ -141,11 +141,18 @@ export class ChallengesService {
 
       // Update the challenge
 
-      const challengeUpdated = this.challengeModel.findByIdAndUpdate(
+      const challengeUpdated = await this.challengeModel.findByIdAndUpdate(
         _id,
         { ...updateChallengeDto, responseDate: new Date() },
         { new: true },
       );
+
+      this.logger.log(`challengeUpdated!!!: ${challengeUpdated}`);
+
+      // Notificate challenged player
+      this.rabbitMQService
+        .getClientProxyNotification()
+        .emit('accepted-challenge', challengeUpdated);
 
       return challengeUpdated;
     } catch (error) {

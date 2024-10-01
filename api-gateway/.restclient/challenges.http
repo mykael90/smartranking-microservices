@@ -8,8 +8,8 @@ Content-Type: {{contentType}}
 
 {
     "challengeDate": "2024-09-20 16:00:00.000",
-    "requester": "66f5b2ed59148b0be84ce7b5",
-    "players": ["66f5b2ed59148b0be84ce7b5","66fb1031a121625db2825876"]
+    "requester": "66fb1031a121625db2825876",
+    "players": ["66f5b30159148b0be84ce7be","66fb1031a121625db2825876"]
 }
 
 

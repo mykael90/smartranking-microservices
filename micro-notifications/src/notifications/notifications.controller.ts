@@ -34,7 +34,33 @@ export class NotificationsController {
       return await channel.ack(originalMsg);
     } catch (error) {
       this.logger.error(`error: ${error.message}`);
-      await channel.ack(originalMsg); // ajeitar depois
+      await channel.nack(originalMsg);
+      throw new RpcException(error.message);
+    }
+  }
+
+  @EventPattern('accepted-challenge')
+  async acceptedChallengeNotification(
+    @Payload() params: any,
+    @Ctx() context: RmqContext,
+  ) {
+    const channel = context.getChannelRef();
+
+    const originalMsg = context.getMessage();
+
+    this.logger.log(
+      `accepted notification challenge: ${JSON.stringify(params)}`,
+    );
+
+    params = transformObjectId(params);
+
+    try {
+      await this.notificationsService.acceptedChallenge(params);
+
+      return await channel.ack(originalMsg);
+    } catch (error) {
+      this.logger.error(`error: ${error.message}`);
+      await channel.nack(originalMsg);
       throw new RpcException(error.message);
     }
   }

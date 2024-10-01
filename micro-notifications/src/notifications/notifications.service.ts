@@ -53,6 +53,51 @@ export class NotificationsService {
     // TODO: Implementar o envio de notificação por outros meios
     // Por exemplo: SMS, WhatsApp, etc.
   }
+  async acceptedChallenge({
+    requester: requesterId,
+    challengeDate,
+    players,
+  }: any) {
+    // TODO: Pegar o e-mail do usuário que desafiou e outras informações com o cliente RabbitMQ
+
+    const date = new Date(challengeDate);
+
+    const [challengeDateFormat, challengeTimeFormat] = momentTimezone(date)
+      .format('DD/MM/YYYY HH:mm')
+      .split(' ');
+
+    const requester = await lastValueFrom(
+      this.rabbitMQService
+        .getClientProxyAdmin()
+        .send('find-player-by-id', requesterId.toString()),
+    );
+
+    const challengedId = players.find(
+      (player: Types.ObjectId) => player.toString() !== requesterId.toString(),
+    );
+
+    const challenged = await lastValueFrom(
+      this.rabbitMQService
+        .getClientProxyAdmin()
+        .send('find-player-by-id', challengedId.toString()),
+    );
+
+    // Envia um email de notificação usando o serviço de e-mail
+    await this.emailService.sendEmail(
+      requester.email,
+      'Accpepted Challenge',
+      'accepted-challenge',
+      {
+        challenged: challenged.name,
+        requester: requester.name,
+        challengeDate: challengeDateFormat,
+        challengeHour: challengeTimeFormat,
+      },
+    );
+
+    // TODO: Implementar o envio de notificação por outros meios
+    // Por exemplo: SMS, WhatsApp, etc.
+  }
 
   async finishedGame(params: any) {
     const { to, challenged, requester, result } = params;
