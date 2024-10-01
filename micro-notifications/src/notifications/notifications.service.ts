@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { EmailService } from '../email/email.service'; // Injetar o serviço de email
 import * as momentTimezone from 'moment-timezone';
 import { lastValueFrom } from 'rxjs';
@@ -7,6 +7,7 @@ import { Types } from 'mongoose';
 
 @Injectable()
 export class NotificationsService {
+  logger = new Logger(NotificationsService.name);
   constructor(
     private readonly emailService: EmailService,
     private readonly rabbitMQService: RabbitMQService,
@@ -101,14 +102,62 @@ export class NotificationsService {
     // Por exemplo: SMS, WhatsApp, etc.
   }
 
-  async finishedGame(params: any) {
-    const { to, challenged, requester, result } = params;
-    // Envia um email de notificação usando o serviço de e-mail
-    await this.emailService.sendEmail(to, 'Finished Game', 'finished-game', {
-      challenged,
-      requester,
-      result,
-    });
+  async finishedGame({
+    _id: game,
+    challenge: idChallenge,
+    category: idCategory,
+    players,
+    def,
+  }: any) {
+    this.logger.log(
+      `Notifying ${players.length} players about a finished game.`,
+      `game: ${game}`,
+      `players: ${players}`,
+      `def: ${def}`,
+      `challenge: ${idChallenge}`,
+      `category: ${idCategory}`,
+    );
+
+    const winner = await lastValueFrom(
+      this.rabbitMQService
+        .getClientProxyAdmin()
+        .send('find-player-by-id', def.toString()),
+    );
+
+    this.logger.log(`Winner: ${JSON.stringify(winner)}`);
+
+    const idLooser = players.find(
+      (player: Types.ObjectId) => player.toString() !== def.toString(),
+    );
+
+    const looser = await lastValueFrom(
+      this.rabbitMQService
+        .getClientProxyAdmin()
+        .send('find-player-by-id', idLooser.toString()),
+    );
+
+    this.logger.log(`Looser: ${JSON.stringify(looser)}`);
+
+    // Envia um email de notificação usando o serviço de e-mail para o vencedor
+    await this.emailService.sendEmail(
+      winner.email,
+      'Finished Game - You Won',
+      'finished-game',
+      {
+        name: winner.name,
+        status: 'VICTORY',
+      },
+    );
+    // Envia um email de notificação usando o serviço de e-mail para o vencedor
+    await this.emailService.sendEmail(
+      looser.email,
+      'Finished Game - You Lost',
+      'finished-game',
+      {
+        name: looser.name,
+        status: 'DEFEAT',
+      },
+    );
 
     // TODO: Implementar o envio de notificação por outros meios
     // Por exemplo: SMS, WhatsApp, etc.

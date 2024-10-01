@@ -74,15 +74,17 @@ export class NotificationsController {
 
     const originalMsg = context.getMessage();
 
-    try {
-      this.logger.log(`new challenge: ${JSON.stringify(params)}`);
+    this.logger.log(`finished game: ${JSON.stringify(params)}`);
 
+    params = transformObjectId(params);
+
+    try {
       await this.notificationsService.finishedGame(params);
 
       return await channel.ack(originalMsg);
     } catch (error) {
       this.logger.error(`error: ${error.message}`);
-      await channel.nack(originalMsg);
+      await channel.ack(originalMsg); //AJEITAR AQUI
       throw new RpcException(error.message);
     }
   }

@@ -47,7 +47,7 @@ POST {{urlLocal}}/{{challenge}}/game
 Content-Type: {{contentType}}
 
 {
-    "def": "66f5b2f359148b0be84ce7b7",
+    "def": "66f5b30159148b0be84ce7be",
     "result": [
         {
             "set": "6-3"

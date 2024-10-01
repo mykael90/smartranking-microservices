@@ -79,6 +79,11 @@ export class GamesService {
       /* Update score */
       this.rabbitMQService.getClientProxyRanking().emit('create-score', result);
 
+      /* Notificate players */
+      this.rabbitMQService
+        .getClientProxyNotification()
+        .emit('finished-game', result);
+
       /* Return updated challenge to client */
       return updatedChallenge;
     } catch (error) {
