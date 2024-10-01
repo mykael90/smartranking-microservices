@@ -9,6 +9,7 @@ import {
 } from '@nestjs/microservices';
 import { PlayersService } from './players.service';
 import { Player } from '../mongo/schemas/player.schema';
+import { transformObjectId } from '../utils/string-to-objectid';
 
 const ackErrors: string[] = [];
 
@@ -91,12 +92,43 @@ export class PlayersController {
   }
 
   @MessagePattern('update-player')
-  update(@Payload() payload: { _id: string; updatePlayerDto: Player }) {
-    return this.playersService.update(payload._id, payload.updatePlayerDto);
+  update(
+    @Payload() payload: { _id: string; updatePlayerDto: Player },
+    @Ctx() context: RmqContext,
+  ) {
+    const channel = context.getChannelRef();
+
+    const originalMsg = context.getMessage();
+
+    this.logger.log(`update player: ${JSON.stringify(payload)}`);
+
+    try {
+      return this.playersService.update(payload._id, payload.updatePlayerDto);
+    } catch (error) {
+      this.logger.error(`error: ${error.message}`);
+
+      throw new RpcException(error.message);
+    } finally {
+      channel.ack(originalMsg);
+    }
   }
 
   @MessagePattern('delete-player')
-  remove(@Payload() id: string) {
-    return this.playersService.remove(id);
+  remove(@Payload() id: string, @Ctx() context: RmqContext) {
+    const channel = context.getChannelRef();
+
+    const originalMsg = context.getMessage();
+
+    this.logger.log(`remove player: ${JSON.stringify(id)}`);
+
+    try {
+      return this.playersService.remove(id);
+    } catch (error) {
+      this.logger.error(`error: ${error.message}`);
+
+      throw new RpcException(error.message);
+    } finally {
+      channel.ack(originalMsg);
+    }
   }
 }

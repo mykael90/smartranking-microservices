@@ -39,8 +39,8 @@ export class NotificationsController {
     }
   }
 
-  @EventPattern('accepted-challenge')
-  async acceptedChallengeNotification(
+  @EventPattern('updated-challenge')
+  async updatedChallengeNotification(
     @Payload() params: any,
     @Ctx() context: RmqContext,
   ) {
@@ -55,7 +55,7 @@ export class NotificationsController {
     params = transformObjectId(params);
 
     try {
-      await this.notificationsService.acceptedChallenge(params);
+      await this.notificationsService.updatedChallenge(params);
 
       return await channel.ack(originalMsg);
     } catch (error) {

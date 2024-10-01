@@ -53,10 +53,11 @@ export class NotificationsService {
     // TODO: Implementar o envio de notificação por outros meios
     // Por exemplo: SMS, WhatsApp, etc.
   }
-  async acceptedChallenge({
+  async updatedChallenge({
     requester: requesterId,
     challengeDate,
     players,
+    status,
   }: any) {
     // TODO: Pegar o e-mail do usuário que desafiou e outras informações com o cliente RabbitMQ
 
@@ -85,13 +86,14 @@ export class NotificationsService {
     // Envia um email de notificação usando o serviço de e-mail
     await this.emailService.sendEmail(
       requester.email,
-      'Accpepted Challenge',
-      'accepted-challenge',
+      `${status} Challenge`,
+      'updated-challenge',
       {
         challenged: challenged.name,
         requester: requester.name,
         challengeDate: challengeDateFormat,
         challengeHour: challengeTimeFormat,
+        status,
       },
     );
 

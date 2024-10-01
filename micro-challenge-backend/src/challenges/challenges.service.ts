@@ -152,7 +152,7 @@ export class ChallengesService {
       // Notificate challenged player
       this.rabbitMQService
         .getClientProxyNotification()
-        .emit('accepted-challenge', challengeUpdated);
+        .emit('updated-challenge', challengeUpdated);
 
       return challengeUpdated;
     } catch (error) {
