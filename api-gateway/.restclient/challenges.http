@@ -7,9 +7,9 @@ POST {{urlLocal}}
 Content-Type: {{contentType}}
 
 {
-    "challengeDate": "2024-09-20 16:00:00.000",
-    "requester": "66fb1031a121625db2825876",
-    "players": ["66f5b30159148b0be84ce7be","66fb1031a121625db2825876"]
+    "challengeDate": "2024-10-20 16:00:00.000",
+    "requester": "66ffe868fb57706847fdb2bb",
+    "players": ["66ffe868fb57706847fdb2bb","66ffe853fb57706847fdb2b8"]
 }
 
 
@@ -47,7 +47,7 @@ POST {{urlLocal}}/{{challenge}}/game
 Content-Type: {{contentType}}
 
 {
-    "def": "66f5b30159148b0be84ce7be",
+    "def": "66ffe853fb57706847fdb2b8",
     "result": [
         {
             "set": "6-3"

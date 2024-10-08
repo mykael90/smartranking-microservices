@@ -9,8 +9,8 @@ Content-Type: {{contentType}}
 
 {
     "phone": "84 9999-5958",
-    "email": "eng.mykael@gmail.com",
-    "name": "Mykael Mello"
+    "email": "mykael.mello@ufrn.br",
+    "name": "Mykael UFRN"
 }
 
 ### GET all
