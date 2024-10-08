@@ -5,7 +5,7 @@ services:
     container_name: api-gateway
     ports:
       - "8080:8080"
-      - "9229:9229"  # Porta para o debug do Visual Studio Code
+      - "9229:9229"  # Porta para o debug do Visual Studio Code, fechar se em produção
     environment:
       ENV: ${ENV}
     env_file:
@@ -22,7 +22,7 @@ services:
     build: ./micro-admin-backend
     container_name: micro-admin-backend
     ports:
-    - "9230:9229"  # Porta para o debug do Micro Admin Backend (9230 no host)
+    - "9230:9229"  # Porta para o debug do Micro Admin Backend (9230 no host), fechar se em produção
     environment:
       ENV: ${ENV}
     env_file:
@@ -38,6 +38,8 @@ services:
   micro-challenge-backend:
     build: ./micro-challenge-backend
     container_name: micro-challenge-backend
+    ports:
+    - "9231:9229"  # Porta para o debug do Micro Admin Backend (9231 no host), fechar se em produção
     environment:
       ENV: ${ENV}
     env_file:
@@ -53,6 +55,8 @@ services:
   micro-notifications:
     build: ./micro-notifications
     container_name: micro-notifications
+    ports:
+    - "9232:9229"  # Porta para o debug do Micro Admin Backend (9232 no host), fechar se em produção 
     environment:
       ENV: ${ENV}
     env_file:
@@ -66,6 +70,8 @@ services:
   micro-ranking-backend:
     build: ./micro-ranking-backend
     container_name: micro-ranking-backend
+    ports:
+    - "9233:9229"  # Porta para o debug do Micro Admin Backend (9233 no host), fechar se em produção     
     environment:
       ENV: ${ENV}
     env_file:
