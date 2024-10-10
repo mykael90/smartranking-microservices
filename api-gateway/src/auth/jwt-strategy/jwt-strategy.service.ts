@@ -16,7 +16,7 @@ export class JwtStrategyService extends PassportStrategy(Strategy, 'jwt') {
 
       algorithm: 'RS256',
 
-      // secretOrKey: configService.get('JWT_SECRET'), // valor estatico
+      // secretOrKey: configService.get('JWT_SECRET'), // valor estatico da variável de ambiente
 
       secretOrKeyProvider: passportJwtSecret({
         jwksUri: `http://host.docker.internal:8000/realms/smartranking/protocol/openid-connect/certs`,
@@ -27,7 +27,7 @@ export class JwtStrategyService extends PassportStrategy(Strategy, 'jwt') {
           console.log('handleSigningKeyError', err);
           cb(err);
         },
-      }), // valor dinamico
+      }), // valor dinamico obtido pelo endpoint do jwks do keycloak
     });
   }
 
