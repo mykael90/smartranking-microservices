@@ -3,7 +3,6 @@ import * as momentTimezone from 'moment-timezone';
 import { AppModule } from './app.module';
 import { AllExceptionsFilter } from './common/filters/http-exception.filter';
 import { Logger } from '@nestjs/common';
-import { log } from 'console';
 
 const logger = new Logger('Main');
 

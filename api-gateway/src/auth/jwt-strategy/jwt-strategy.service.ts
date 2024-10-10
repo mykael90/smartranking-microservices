@@ -2,6 +2,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import { Strategy, ExtractJwt } from 'passport-jwt';
 import { Logger, Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { passportJwtSecret } from 'jwks-rsa';
 
 @Injectable()
 export class JwtStrategyService extends PassportStrategy(Strategy, 'jwt') {
@@ -15,7 +16,18 @@ export class JwtStrategyService extends PassportStrategy(Strategy, 'jwt') {
 
       algorithm: 'RS256',
 
-      secretOrKey: configService.get('JWT_SECRET'),
+      // secretOrKey: configService.get('JWT_SECRET'), // valor estatico
+
+      secretOrKeyProvider: passportJwtSecret({
+        jwksUri: `http://host.docker.internal:8000/realms/smartranking/protocol/openid-connect/certs`,
+        cache: true,
+        rateLimit: true,
+        jwksRequestsPerMinute: 5,
+        handleSigningKeyError(err, cb) {
+          console.log('handleSigningKeyError', err);
+          cb(err);
+        },
+      }), // valor dinamico
     });
   }
 

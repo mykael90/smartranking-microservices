@@ -5,6 +5,8 @@ import { AuthService } from './auth/auth.service';
 import { AuthController } from './auth/auth.controller';
 import { HttpModule } from '@nestjs/axios';
 
+import './depracated_auth-config.service';
+
 @Module({
   imports: [HttpModule, PassportModule.register({ defaultStrategy: 'jwt' })],
   providers: [AuthService, JwtStrategyService],
