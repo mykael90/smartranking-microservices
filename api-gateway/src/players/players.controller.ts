@@ -16,6 +16,7 @@ import {
   MaxFileSizeValidator,
   BadRequestException,
   NotFoundException,
+  UseGuards,
 } from '@nestjs/common';
 import { CreatePlayerDto } from './dto/create-player.dto';
 import { UpdatePlayerDto } from './dto/update-player.dto';
@@ -26,6 +27,7 @@ import { RpcException } from '@nestjs/microservices';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { join } from 'path';
 import { FileService } from '../file/file.service';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('api/v1/players')
 export class PlayersController {
@@ -49,6 +51,7 @@ export class PlayersController {
     };
   }
 
+  @UseGuards(AuthGuard('jwt'))
   @Get()
   findPlayers() {
     return this.rabbitMQService.getClientProxyAdmin().send('find-players', {});

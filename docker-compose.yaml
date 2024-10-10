@@ -8,6 +8,7 @@ services:
       - "9229:9229"  # Porta para o debug do Visual Studio Code, fechar se em produção
     environment:
       ENV: ${ENV}
+      DEBUG_MODE: ${DEBUG_MODE}
     env_file:
       - ${ENV_FILE_RMQ}
     volumes:
@@ -25,6 +26,7 @@ services:
     - "9230:9229"  # Porta para o debug do Micro Admin Backend (9230 no host), fechar se em produção
     environment:
       ENV: ${ENV}
+      DEBUG_MODE: ${DEBUG_MODE}
     env_file:
       - ${ENV_FILE_DB}
       - ${ENV_FILE_RMQ}
@@ -42,6 +44,7 @@ services:
     - "9231:9229"  # Porta para o debug do Micro Admin Backend (9231 no host), fechar se em produção
     environment:
       ENV: ${ENV}
+      DEBUG_MODE: ${DEBUG_MODE}
     env_file:
       - ${ENV_FILE_DB}
       - ${ENV_FILE_RMQ}
@@ -59,6 +62,7 @@ services:
     - "9232:9229"  # Porta para o debug do Micro Admin Backend (9232 no host), fechar se em produção 
     environment:
       ENV: ${ENV}
+      DEBUG_MODE: ${DEBUG_MODE}
     env_file:
       - ${ENV_FILE_MAILER}
       - ${ENV_FILE_RMQ}
@@ -74,6 +78,7 @@ services:
     - "9233:9229"  # Porta para o debug do Micro Admin Backend (9233 no host), fechar se em produção     
     environment:
       ENV: ${ENV}
+      DEBUG_MODE: ${DEBUG_MODE}
     env_file:
       - ${ENV_FILE_DB}
       - ${ENV_FILE_RMQ}

@@ -8,8 +8,14 @@ import { RabbitMQModule } from './rabbitmq/rabbitmq.module';
 import { ChallengesModule } from './challenges/challenges.module';
 import { GamesModule } from './games/games.module';
 import { ScoresModule } from './scores/scores.module';
+import { AuthModule } from './auth/auth.module';
+import { ConfigModule } from '@nestjs/config';
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
+    AuthModule,
     RabbitMQModule,
     PlayersModule,
     CategoriesModule,
