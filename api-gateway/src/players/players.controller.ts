@@ -27,7 +27,7 @@ import { RpcException } from '@nestjs/microservices';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { join } from 'path';
 import { FileService } from '../file/file.service';
-import { AuthGuard } from '@nestjs/passport';
+import { JwtGuard } from '../auth/auth/jwt.guard';
 
 @Controller('api/v1/players')
 export class PlayersController {
@@ -51,7 +51,7 @@ export class PlayersController {
     };
   }
 
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(JwtGuard)
   @Get()
   findPlayers() {
     return this.rabbitMQService.getClientProxyAdmin().send('find-players', {});
