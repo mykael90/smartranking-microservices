@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+
+  app:
+    build: .docker/keycloak
+    container_name: mykeycloak
+    depends_on:
+      - db
+    ports:
+      - "8443:8443" # for production
+      - "8000:8080" # for development
+    environment:
+      ENV: ${ENV}
+    env_file:
+      - ${ENV_FILE_KC}
+    command: >
+      start-dev --spi-dblock-jpa-lock-wait-timeout 300
+  db:
+    build: .docker/mysql
+    container_name: mykeycloak-db
+    environment:
+      ENV: ${ENV}
+    env_file:
+      - ${ENV_FILE_MYSQL}
+    ports:
+      - "3310:3306"
+    volumes:
+      - ../data/keycloak-data/${ENV}:/var/lib/mysql

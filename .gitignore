@@ -43,6 +43,8 @@ lerna-debug.log*
 .env.test.local
 .env.production.local
 .env.local
+/micro-auth-keycloak/.env
+/micro-auth-keycloak/_env/*prod
 # .env.db.dev
 # .env.db.prod
 # .env.rmq.dev

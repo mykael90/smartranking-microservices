@@ -19,7 +19,7 @@ export class JwtStrategyService extends PassportStrategy(Strategy, 'jwt') {
       // secretOrKey: configService.get('JWT_SECRET'), // valor estatico da variável de ambiente
 
       secretOrKeyProvider: passportJwtSecret({
-        jwksUri: `http://host.docker.internal:8000/realms/smartranking/protocol/openid-connect/certs`,
+        jwksUri: `${configService.get<string>('KC_PROTOCOL')}://${configService.get<string>('KC_HOST')}:${configService.get<string>('KC_PORT')}/realms/${configService.get<string>('KC_REALM')}/protocol/openid-connect/certs`,
         cache: true,
         rateLimit: true,
         jwksRequestsPerMinute: 5,
